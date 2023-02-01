@@ -102,34 +102,22 @@ data "hcp_packer_image" "azure-ubuntu-apache" {
 
 
 resource "azurerm_linux_virtual_machine" "futureApp" {
-  name                = "${var.prefix}-future"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.myresourcegroup.name
-  vm_size             = var.vm_size
-
-  network_interface_ids         = [azurerm_network_interface.futureApp-nic.id]
-  delete_os_disk_on_termination = "true"
-
-  source_image_id = data.hcp_packer_image.azure-ubuntu-apache.cloud_image_id
-
+  name                            = "${var.prefix}-future"
+  resource_group_name             = azurerm_resource_group.myresourcegroup.name
+  location                        = var.location
+  size                            = var.vm_size
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password
+  network_interface_ids           = [azurerm_network_interface.futureApp-nic.id]
+  delete_os_disk_on_termination   = "true"
+  disable_password_authentication = false
+  source_image_id                 = data.hcp_packer_image.azure-ubuntu-apache.cloud_image_id
+  computer_name                   = var.prefix
   os_disk {
     name              = "${var.prefix}-osdisk"
     managed_disk_type = "Standard_LRS"
     caching           = "ReadWrite"
   }
-
-  os_profile {
-    computer_name  = var.prefix
-    admin_username = var.admin_username
-    admin_password = var.admin_password
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  tags = {}
-
   # Added to allow destroy to work correctly.
   depends_on = [azurerm_network_interface_security_group_association.futureApp-nic-sg-ass]
 }
