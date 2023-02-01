@@ -109,14 +109,13 @@ resource "azurerm_linux_virtual_machine" "futureApp" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   network_interface_ids           = [azurerm_network_interface.futureApp-nic.id]
-  delete_os_disk_on_termination   = "true"
   disable_password_authentication = false
   source_image_id                 = data.hcp_packer_image.azure-ubuntu-apache.cloud_image_id
   computer_name                   = var.prefix
   os_disk {
-    name              = "${var.prefix}-osdisk"
-    managed_disk_type = "Standard_LRS"
-    caching           = "ReadWrite"
+    name                 = "${var.prefix}-osdisk"
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
   }
   # Added to allow destroy to work correctly.
   depends_on = [azurerm_network_interface_security_group_association.futureApp-nic-sg-ass]
@@ -136,7 +135,7 @@ resource "azurerm_linux_virtual_machine" "futureApp" {
 # Run the deploy_app.sh script.
 resource "null_resource" "configure-future-app" {
   depends_on = [
-    azurerm_virtual_machine.futureApp,
+    azurerm_linux_virtual_machine.futureApp
   ]
 
   # Terraform 0.11
