@@ -110,7 +110,7 @@ resource "azurerm_linux_virtual_machine" "futureApp" {
   network_interface_ids         = [azurerm_network_interface.futureApp-nic.id]
   delete_os_disk_on_termination = "true"
 
-  source_image_id = data.hcp_packer_image.azure_ubuntu_nginx.cloud_image_id
+  source_image_id = data.hcp_packer_image.azure_ubuntu_apache.cloud_image_id
 
   os_disk {
     name              = "${var.prefix}-osdisk"
