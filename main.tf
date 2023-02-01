@@ -168,23 +168,13 @@ resource "null_resource" "configure-future-app" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt -y update",
-      "sleep 15",
-      "sudo apt -y update",
-      "sudo apt -y install apache2",
-      "sudo systemctl start apache2",
       "sudo chown -R ${var.admin_username}:${var.admin_username} /var/www/html",
       "chmod +x *.sh",
       "cd /var/www/html",
       "rm index.html",
       "git clone https://github.com/CloudbrokerAz/theFutureHasLanded.git .",
       "LOCATION=${var.location} PREFIX=${var.prefix} /home/${var.admin_username}/deploy_app.sh",
-      "sudo apt-get remove certbot",
-      "sudo snap install --classic certbot",
-      "sudo ln -s /snap/bin/certbot /usr/bin/certbot",
       "sudo certbot --agree-tos --apache --renew-by-default --register-unsafely-without-email -d ${var.prefix}-future.${var.location}.cloudapp.azure.com",
-      "sudo apt -y install cowsay",
-      "cowsay FUTURE Mooooooooooo!",
     ]
 
     connection {
