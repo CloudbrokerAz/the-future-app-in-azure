@@ -93,7 +93,15 @@ resource "azurerm_public_ip" "futureApp-pip" {
   domain_name_label   = "${var.prefix}-future"
 }
 
-resource "azurerm_virtual_machine" "futureApp" {
+data "hcp_packer_image" "azure-ubuntu-apache" {
+  bucket_name     = "azure-ubuntu-apache"
+  channel         = "latest"
+  cloud_provider  = "azure"
+  region          = "Australia East"
+}
+
+
+resource "azurerm_linux_virtual_machine" "futureApp" {
   name                = "${var.prefix}-future"
   location            = var.location
   resource_group_name = azurerm_resource_group.myresourcegroup.name
@@ -102,18 +110,12 @@ resource "azurerm_virtual_machine" "futureApp" {
   network_interface_ids         = [azurerm_network_interface.futureApp-nic.id]
   delete_os_disk_on_termination = "true"
 
-  storage_image_reference {
-    publisher = var.image_publisher
-    offer     = var.image_offer
-    sku       = var.image_sku
-    version   = var.image_version
-  }
+  source_image_id = data.hcp_packer_image.azure_ubuntu_nginx.cloud_image_id
 
-  storage_os_disk {
+  os_disk {
     name              = "${var.prefix}-osdisk"
     managed_disk_type = "Standard_LRS"
     caching           = "ReadWrite"
-    create_option     = "FromImage"
   }
 
   os_profile {
