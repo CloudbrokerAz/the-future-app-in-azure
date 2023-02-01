@@ -95,13 +95,17 @@ resource "azurerm_public_ip" "futureApp-pip" {
   domain_name_label   = "${var.prefix}-future"
 }
 
-data "hcp_packer_image" "azure-ubuntu-apache" {
-  bucket_name    = "azure-ubuntu-apache"
-  channel        = "latest"
-  cloud_provider = "azure"
-  region         = "Australia East"
+data "hcp_packer_iteration" "ubuntu" {
+  bucket_name = "azure-ubuntu-apache"
+  channel     = "latest"
 }
 
+data "hcp_packer_image" "azure-ubuntu-apache" {
+  bucket_name    = "azure-ubuntu-apache"
+  cloud_provider = "azure"
+  iteration_id   = data.hcp_packer_iteration.ubuntu.ulid
+  region         = "Australia East"
+}
 
 resource "azurerm_linux_virtual_machine" "futureApp" {
   name                            = "${var.prefix}-future"
