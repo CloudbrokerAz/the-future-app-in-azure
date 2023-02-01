@@ -68,9 +68,9 @@ resource "azurerm_network_security_group" "futureApp-sg" {
 }
 
 resource "azurerm_network_interface" "futureApp-nic" {
-  name                      = "${var.prefix}-futureApp-nic"
-  location                  = var.location
-  resource_group_name       = azurerm_resource_group.myresourcegroup.name
+  name                = "${var.prefix}-futureApp-nic"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.myresourcegroup.name
 
   ip_configuration {
     name                          = "${var.prefix}ipconfig"
@@ -94,10 +94,10 @@ resource "azurerm_public_ip" "futureApp-pip" {
 }
 
 data "hcp_packer_image" "azure-ubuntu-apache" {
-  bucket_name     = "azure-ubuntu-apache"
-  channel         = "latest"
-  cloud_provider  = "azure"
-  region          = "Australia East"
+  bucket_name    = "azure-ubuntu-apache"
+  channel        = "latest"
+  cloud_provider = "azure"
+  region         = "Australia East"
 }
 
 
@@ -110,7 +110,7 @@ resource "azurerm_linux_virtual_machine" "futureApp" {
   network_interface_ids         = [azurerm_network_interface.futureApp-nic.id]
   delete_os_disk_on_termination = "true"
 
-  source_image_id = data.hcp_packer_image.azure_ubuntu_apache.cloud_image_id
+  source_image_id = data.hcp_packer_image.azure_ubuntu_nginx.cloud_image_id
 
   os_disk {
     name              = "${var.prefix}-osdisk"
